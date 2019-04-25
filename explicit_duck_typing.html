@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Explicit Duck Typing with Kotlin Inline Classes</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Fira+Mono|Merriweather:300|Open+Sans);
+
+      body {
+        font-family: 'Merriweather', serif;
+        font-size: larger;
+      }
+      body.remark-container {
+        background: #000;
+        color: #ddd;
+      }
+      a:link { color: #44C; }
+      a:hover { color: #66C; }
+      a:visited { color: #A4A; }
+      .footnote {
+        position: absolute;
+        font-size: smaller;
+        bottom: 3em;
+        right: 1.5em;
+      }
+      .remark-slide-scaler {
+          transform-origin: top-left;
+          -moz-box-shadow: 0 0 30px #222;
+          -webkit-box-shadow: 0 0 30px #222;
+          box-shadow: 0 0 30px #222;
+      }
+      .remark-slide-content {
+        background: #222;
+      }
+      li {
+        margin: 0.25em 0em;
+      }
+      h1, h2, h3, h4 {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: bold;
+      }
+      *:link { color: #33d; }
+      a:hover { color: #55d; }
+      *:visited { color: #d3d; }
+      .remark-code, .remark-inline-code {
+        background: black;
+        font-family: 'Fira Mono', monospace;
+        border-radius: 5px;
+        padding: .5em;
+      }
+      .remark-inline-code {
+        background: #111;
+        border-radius: 5px;
+        padding: 0.075em 0.2em;
+      }
+      .remark-code-span-highlighted {
+        background-color: rgba(255, 255, 0, 0.35);
+        border-radius: 5px;
+        border: 1.5px solid #BB0;
+      }
+      .remark-code-line-highlighted {
+        background-color: rgba(255, 255, 0, 0.35);
+        border-width: 0px 2px;
+        border-style: solid;
+        border-color: #BB0;
+      }
+      .remark-notes-area .remark-inline-code {
+        color: #FFF;
+      }
+      /* Two-column layout */
+      .left-column {
+        color: #888;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+      /*
+      .left-column h3 {
+        margin: 0.5em 0em 0em 0.5em;
+        font-size: 120%;
+      }
+      .left-column h4 {
+        margin: 0.5em 0em 0em 1.5em;
+        font-size: 100%;
+      }
+      */
+      .left-column .current {
+        color: #ddd;
+      }
+      .right-column {
+        width: 75%;
+        float: right;
+        /*padding-top: 1em;*/
+      }
+      .clear {
+        clear: both;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" style="display: none">
+
+class: center, middle
+
+# Explicit Duck Typing<br/>with Kotlin Inline Classes
+
+## Hugh Greene <hughg@tameter.org>  
+
+### April 2019
+
+.footnote[Presentation made with [remarkjs](https://remarkjs.com/).]
+
+---
+
+# Duck Typing
+
+--
+
+No, it's not an instruction ;-P
+
+--
+
+> "If it walks like a duck<br/>
+> and it quacks like a duck<br/>
+> then it must be a duck!"
+
+See [Wikipedia](https://en.wikipedia.org/wiki/Duck_typing) for more.
+
+--
+
+In code terms
+
+--
+
+> "If I try to access a method or property on an object<br/>
+> and the object has a matching method or property<br/>
+> then the object can do what I want!"
+
+---
+
+# Duck Typing
+
+The "matching" is in terms of name,<br/>
+and maybe argument and return types,<br/>
+as discovered at runtime.
+
+--
+
+As seen in
+
+* Python
+* JavaScript
+* Ruby
+* Groovy
+* ...
+
+---
+
+# Structural Typing
+
+Duck typing is similar to [structural typing](https://en.wikipedia.org/wiki/Structural_type_system),<br>
+which checks all the required matches at compile time.
+
+--
+
+As seen in ...
+
+* C++: template expansion
+* Go: interfaces
+
+---
+
+# Duck Typing in Action
+
+
+```Python
+class Duck:
+    def fly(self):
+        print("Duck flying")
+
+class Airplane:
+    def fly(self):
+        print("Airplane flying")
+```
+
+--
+
+... but then ...
+
+```Python
+class Trouser:
+    def fly(self):
+        return db.componentRef(self.id, "fastening")
+
+class ButtonTrouser( Trouser ):
+    def fly(self):
+        return None
+```
+
+Hmm ...
+
+---
+
+# Duck Typing in Action
+
+"Doesn't happen if you use Bounded Context!"
+
+or
+
+"Just rename to avoid clashes!"  Okay ...
+
+```Python
+class Trouser:
+    def `zip`(self):
+        return db.componentRef(self.id, "fastening")
+
+class ButtonTrouser(Trouser):
+    def `zip`(self):
+        return None
+```
+
+--
+
+... and then ...
+
+```Python
+class Address: # in 3rd-party library
+    def zip(self):
+        return store.getField(self.id, "area_code")
+```
+
+---
+
+# Duck Typing in Action
+
+Or ...
+
+```
+file.close()
+```
+--
+```
+window.close()
+```
+--
+```
+ledger.close()
+```
+
+--
+... or ...
+
+```
+list.add(item)
+```
+--
+```
+map.add(entry)
+```
+--
+```
+integer.add(operand)
+```
+
+---
+
+# Nominal Typing
+
+Two types are the same _if and only if_
+their names refer to the same declarations.
+
+One type is a subtype of another _if and only if_
+its definition says that it is.
+
+--
+
+As seen in
+
+* C++ classes/structs
+* Java types
+* C# types
+* Rust types
+* ...
+
+---
+
+# Programming to Interfaces
+
+Nominal type systems point you to giving all your "ducks" the same interface.
+
+```C#
+interface IDuck {
+    void fly();
+}
+
+// Is a duck
+class Duck : IDuck {
+    public void fly() { print("Duck flying"); }
+}
+
+// Is a duck, for our purposes
+class Airplane : IDuck {
+    public void fly() { print("Airplane flying"); }
+}
+
+// Clearly not a duck
+class Trouser : IClothing {
+    String fly() { return db.componentRef(self.id, "fastening"); }
+}
+```
+
+---
+
+# Adapter Pattern
+
+What if you want a class to implement an interface but you can't edit its source?
+
+Adapter Design Pattern:
+
+* Wrap it in a new type which _does_ implement the interface.
+
+```C#
+interface IDuck {
+    void fly();
+}
+
+// Is a duck
+class FlyingBall : IDuck {
+    private Ball ball;
+    public FlyingBall(Ball ball) { this.ball = ball; }
+    public void fly() { ball.parabolicArc(); }
+}
+```
+
+---
+
+# Adapter Pattern: Caveats
+
+BUT
+
+* You have to take time and space to construct the wrapper object.
+* You can't pass the wrapped object to APIs which expect the original type
+unless you can also implement the interfaces it implements.
+
+```C#
+interface IDuck {
+    void fly();
+}
+
+// Is a duck ... and a ball.
+class FlyingBall : IDuck, IBall {
+    private IBall ball;
+    public FlyingBall(IBall ball) { this.ball = ball; }
+    public void fly() { ball.parabolicArc(); }
+    public void parabolicArc() { ball.parabolicArc(); }
+}
+```
+
+---
+
+# Kotlin Inline Classes
+
+Create a new type around an existing type, with minimal runtime overhead.
+
+* Underlying type is used where possible.
+* Wrapper object is auto-created if an object is referenced
+ * via an interface
+ * via a generic type variable
+ * as a nullable type (`SomeType?`)
+* Underlying type is used in JVM signature.
+ * Method names are mangled to distinguish overloads.
+
+---
+
+# Kotlin Inline Classes: Durations
+
+```
+interface Duration {
+    val asSeconds: Long
+    val asMinutes: Long
+    val asHours: Long
+}
+
+const val SECONDS_PER_MINUTE: Long = 60
+const val MINUTES_PER_HOUR: Long = 60
+
+inline class Seconds(override val asSeconds: Long) : Duration {
+    override val asMinutes: Long get() = asSeconds / SECONDS_PER_MINUTE
+    override val asHours: Long get() = asMinutes / (SECONDS_PER_MINUTE * MINUTES_PER_HOUR)
+}
+
+inline val Long.seconds get() = Seconds(this)
+inline val Int.seconds get() = this.toLong().seconds
+val MO = 2.seconds
+```
+
+---
+
+# Kotlin Inline Classes: Adapter Pattern
+
+Given Java definition
+```Java
+public interface Ball {
+    void parabolicArc();
+}
+```
+
+you can do this in Kotlin:
+
+```
+interface Duck {
+    fun fly()
+}
+
+&#x2060;`inline` class FlyingBall(private val ball: Ball) : Duck, Ball `by ball` {
+    fun fly() { ball.parabolicArc(); }
+}
+
+fun javaInteropExample() {
+    val myBall = FlyingBall(JavaBallFactory.getBall())
+    myBall.fly()
+    JavaBallFactory.repair(myBall) // will call repair(Ball) in Java
+}
+```
+
+
+    </textarea>
+<!--
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+-->
+    <script src="remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({
+        ratio: '16:9',
+        highlightLanguage: 'kotlin',
+        highlightStyle: 'tomorrow-night-bright',
+        highlightSpans: true,
+        highlightLines: true,
+      });
+    </script>
+  </body>
+</html>
