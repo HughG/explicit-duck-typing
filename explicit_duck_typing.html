@@ -150,6 +150,10 @@ No, it's not an instruction ;-P
 
 --
 
+It's about how you know what type of data/objects you're using in your code.
+
+--
+
 > "If it walks like a duck<br/>
 > and it quacks like a duck<br/>
 > then it must be a duck!"
@@ -222,7 +226,7 @@ class Trouser:
     def fly(self):
         return db.componentRef(self.id, "fastening")
 
-class ButtonTrouser( Trouser ):
+class JoggingTrouser( Trouser ):
     def fly(self):
         return None
 ```
@@ -244,7 +248,7 @@ class Trouser:
     def `zip`(self):
         return db.componentRef(self.id, "fastening")
 
-class ButtonTrouser(Trouser):
+class JoggingTrouser(Trouser):
     def `zip`(self):
         return None
 ```
@@ -309,7 +313,7 @@ As seen in
 * C++ classes/structs
 * Java types
 * C# types
-* Rust types
+* Rust types/traits
 * ...
 
 ---
@@ -392,12 +396,12 @@ class FlyingBall : IDuck, IBall {
 
 Create a new type around an existing type, with minimal runtime overhead.
 
-* Underlying type is used where possible.
+* Underlying type is used where class type is used at compile time.
 * Wrapper object is auto-created if an object is referenced
  * via an interface
  * via a generic type variable
  * as a nullable type (`SomeType?`)
-* Underlying type is used in JVM signature.
+* In JVM-based Kotlin, underlying type is used in signatures.
  * Method names are mangled to distinguish overloads.
 
 ---
